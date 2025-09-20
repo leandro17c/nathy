@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti NATH</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'ROBOTO', cursive; /* Una fuente más romántica */
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #FFD700;
+            font-size: 4em;
+            text-shadow: 0 0 10px #FFD700;
+            text-align: center;
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            animation: fadeInText 3s ease-in-out;
+        }
+
+        .desp {
+            font-family: 'Roboto', sans-serif,;
+            color: #FFD700;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            opacity: 0;
+            animation: fadeInHeart 3s ease-in-out 2s forwards;
+        }
+
+        .heart-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+        }
+
+        .flower {
+            position: absolute;
+            bottom: -20px; /* Empezar un poco fuera de la pantalla */
+            --flower-size: 80px;
+            width: var(--flower-size);
+            height: var(--flower-size);
+            transform-origin: bottom center;
+            transform: scale(0) translateY(100%);
+            animation: growAndBloom 6s forwards;
+        }
+        
+        /* Usando un SVG para una flor más detallada */
+        .flower svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+        }
+
+        .petal {
+            position: absolute;
+            top: -20px;
+            width: 15px;
+            height: 15px;
+            background-color: #FFD700;
+            border-radius: 50% 0;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes growAndBloom {
+            0% {
+                transform: scale(0) translateY(100%);
+            }
+            50% {
+                transform: scale(0.5) translateY(0);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes fadeInText {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInHeart {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Para asegurar que la música se reproduzca en algunos navegadores */
+        #play-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Oculto por defecto */
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container" id="container">
+        <h1>TE AMO</h1>
+        <br>
+        <div id="desp">
+        <p id="desp" style="color: white; font-size: 1.2em; text-align: center; padding: 0 20px;">
+    Espero que escuches de fondo la melodía. La elegí pensando en ti, en nosotros, y en ese amor de cuento de hadas que me haces sentir cada día. Eres la princesa de mi historia.
+        </p>
+        </div>
+        <div class="heart-container">
+            <img src="img/Sin título-2.png" alt="Corazón">
+        </div>
+    </div>
+    <audio id="background-music" loop>
+        <source src="sound/Taylor Swift - Love Story.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('container');
+            const numFlowers = 15;
+            const numPetals = 50;
+            const music = document.getElementById('background-music');
+
+            // --- Control de la música ---
+            // Intenta reproducir la música automáticamente
+            let promise = music.play();
+            if (promise !== undefined) {
+                promise.then(_ => {
+                    // Autoplay funcionó
+                }).catch(error => {
+                    // Autoplay fue bloqueado. Mostramos un "velo" para que el usuario interactúe.
+                    const overlay = document.createElement('div');
+                    overlay.style.position = 'fixed';
+                    overlay.style.top = '0';
+                    overlay.style.left = '0';
+                    overlay.style.width = '100%';
+                    overlay.style.height = '100%';
+                    overlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                    overlay.style.color = 'white';
+                    overlay.style.display = 'flex';
+                    overlay.style.justifyContent = 'center';
+                    overlay.style.alignItems = 'center';
+                    overlay.style.fontSize = '24px';
+                    overlay.style.textAlign = 'center';
+                    overlay.style.cursor = 'pointer';
+                    overlay.style.zIndex = '1000';
+                    overlay.innerHTML = 'Toca la pantalla para empezar la magia ✨';
+                    document.body.appendChild(overlay);
+
+                    overlay.addEventListener('click', () => {
+                        music.play();
+                        document.body.removeChild(overlay);
+                    });
+                });
+            }
+
+            // --- Crear flores ---
+            const flowerSVG = `
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="scale(0.5) translate(50, 50)">
+                        <path d="M0 -40 C 20 -40, 20 0, 0 0 C -20 0, -20 -40, 0 -40 Z" fill="#FFD700" transform="rotate(0)"/>
+                        <path d="M0 -40 C 20 -40, 20 0, 0 0 C -20 0, -20 -40, 0 -40 Z" fill="#FFD700" transform="rotate(60)"/>
+                        <path d="M0 -40 C 20 -40, 20 0, 0 0 C -20 0, -20 -40, 0 -40 Z" fill="#FFD700" transform="rotate(120)"/>
+                        <path d="M0 -40 C 20 -40, 20 0, 0 0 C -20 0, -20 -40, 0 -40 Z" fill="#FFD700" transform="rotate(180)"/>
+                        <path d="M0 -40 C 20 -40, 20 0, 0 0 C -20 0, -20 -40, 0 -40 Z" fill="#FFD700" transform="rotate(240)"/>
+                        <path d="M0 -40 C 20 -40, 20 0, 0 0 C -20 0, -20 -40, 0 -40 Z" fill="#FFD700" transform="rotate(300)"/>
+                        <circle cx="0" cy="0" r="15" fill="#B8860B"/>
+                    </g>
+                </svg>`;
+
+            for (let i = 0; i < numFlowers; i++) {
+                const flower = document.createElement('div');
+                flower.className = 'flower';
+                flower.innerHTML = flowerSVG;
+                flower.style.left = `${Math.random() * 95}vw`;
+                flower.style.animationDelay = `${Math.random() * 5}s`;
+                const randomSize = Math.random() * 60 + 40; // Tamaños entre 40px y 100px
+                flower.style.setProperty('--flower-size', `${randomSize}px`);
+                container.appendChild(flower);
+            }
+
+            // --- Crear lluvia de pétalos ---
+            for (let i = 0; i < numPetals; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.left = `${Math.random() * 100}vw`;
+                petal.style.animationDuration = `${Math.random() * 5 + 7}s`; // Más lento
+                petal.style.animationDelay = `${Math.random() * 10}s`;
+                document.body.appendChild(petal);
+            }
+        });
+    </script>
+    
+
+</body>
+</html>
